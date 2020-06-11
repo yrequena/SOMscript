@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Practica2UD7
+# Primero, crearemos los grupos, de este modo, cuando creemos los usuarios, podemos hacer que formen parte de dichos grupos directamente.
+# Crearemos los usuarios de 1º a 4º de ESO, 1º y 2º de BAchiller , 1º SMR, administrador y dos usuarios deshabilitados, los cuales serán alumno y profesor.
+# Finalmente, crearemos los directorios de la supuesta base de datos.
+# Una vez creadas la base de datos, asignamos los permisos.
+
+ESO="ESO"
+publico="Publico"
+
+
+echo	"Creando los grupos..."
+
+	sudo groupadd ESO
+
+	for ceso0 in {1..4}
+	do
+		sudo mkdir /home/$ceso0$ESO
+	done
+
+echo	"Creando usuarios..."
+
+	for ceso in {1..4}
+	do
+		sudo useradd -p 12345678 -d /home/$ceso$ESO -g "ESO" -c $ceso$ESO  $ceso$ESO
+	done
+
+echo "Creando los directorios"
+
+	mkdir $publico
+	for dir in {1..4}
+	do
+		mkdir $publico/$dir$ESO
+	done
+		touch $publico/1ESO/ejemplo.dat
+		touch $publico/2ESO/ejemplo.dat
+		touch $publico/3ESO/ejemplo.dat
+		touch $publico/4ESO/ejemplo.dat
+
+# Cambiamos los permisos.
+# Con esto, hacemos que el propietario de los directorios, tenga todos los permisos posibles y los que pertenezcan al mismo grupo, solo lectura.
+
+	for ceso2 in {1..4}
+	do
+	sudo chmod 740 $publico/$ceso2$ESO 
+	done
+
+#Ahora cambiamos el propietario de los directorios de forma recursiva.
+
+	for ceso3 in {1..4}
+	do
+	sudo chown -R $ceso3$ESO $publico/$ceso3$ESO
+	done
