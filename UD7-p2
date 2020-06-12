@@ -7,6 +7,8 @@
 # Una vez creadas la base de datos, asignamos los permisos.
 
 ESO="ESO"
+BACH="BACH"
+SMR="SMR"
 publico="Publico"
 
 
@@ -14,17 +16,50 @@ echo	"Creando los grupos..."
 
 	sudo groupadd ESO
 
-	for ceso0 in {1..4}
+	for ceso in {1..4}
 	do
-		sudo mkdir /home/$ceso0$ESO
+		sudo mkdir /home/$ceso$ESO
 	done
+
+	sudo groupadd BACH
+
+	for cbach in {1..2}
+	do
+		sudo mkdir /home/$cbach$BACH
+	done
+
+	sudo groupadd SMR
+	sudo mkdir /home/1$SMR
 
 echo	"Creando usuarios..."
 
-	for ceso in {1..4}
+#Creamos los usuarios de la ESO.
+
+	for ceso1 in {1..4}
 	do
-		sudo useradd -p 12345678 -d /home/$ceso$ESO -g "ESO" -c $ceso$ESO  $ceso$ESO
+		sudo useradd -p 12345 -d /home/$ceso1$ESO -g "ESO" -c $ceso1$ESO  $ceso1$ESO
 	done
+
+#Creamos los usuarios de BACH.
+
+	for cbach1 in {1..2}
+	do
+		sudo useradd -p 12345 -d /home/$cbach1$BACH -g "BACH" -c $cbach1$BACH $cbach1$BACH
+	done
+
+#Creamos el usuario 1SMR.
+
+	sudo useradd -p 12345 -d /home/1$SMR -g "SMR" -c 1$SMR 1$SMR
+
+#FInalmente creamos los usuarios alumno y profesor, los cuales estarán ocultos.
+
+	sudo useradd -p 12345 -c alumno alumno
+	sudo useradd -p 12345 -g sudo -c profesor profesor
+
+#Ocultamos los usuarios alumno y profesor.
+
+	sudo passwd -d alumno
+	sudo passwd -d profesor
 
 echo "Creando los directorios"
 
@@ -33,10 +68,23 @@ echo "Creando los directorios"
 	do
 		mkdir $publico/$dir$ESO
 	done
+
+	for dir2 in {1..2}
+	do
+		mkdir $publico/$dir2$BACH
+	done
+
+	mkdir $publico/1$SMR
+
+# Creamos algunos documentos de prueba en cada directorio.
+
 		touch $publico/1ESO/ejemplo.dat
 		touch $publico/2ESO/ejemplo.dat
 		touch $publico/3ESO/ejemplo.dat
 		touch $publico/4ESO/ejemplo.dat
+		touch $publico/1BACH/ejemplo.dat
+		touch $publico/2BACH/ejemplo.dat
+		touch $publico/1SMR/ejemplo.dat
 
 # Cambiamos los permisos.
 # Con esto, hacemos que el propietario de los directorios, tenga todos los permisos posibles y los que pertenezcan al mismo grupo, solo lectura.
@@ -46,9 +94,25 @@ echo "Creando los directorios"
 	sudo chmod 740 $publico/$ceso2$ESO 
 	done
 
+	for cbach2 in {1..2}
+	do
+	sudo chmod 740 $publico/$cbach2$BACH
+	done
+
+	sudo chmod 740 $publico/1SMR
+
 #Ahora cambiamos el propietario de los directorios de forma recursiva.
 
 	for ceso3 in {1..4}
 	do
 	sudo chown -R $ceso3$ESO $publico/$ceso3$ESO
 	done
+
+	for cbach3 in {1..2}
+	do
+	sudo chown -R $cbach3$BACH $publico/$cbach3$ESO
+	done
+
+	sudo chown -R 1$SMR $publico/1$SMR
+
+# Falta introducir el menú y un par de opciones como borrar la base de datos y comprobar los usuarios/grupos
